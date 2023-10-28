@@ -21,11 +21,15 @@ I task da svolgere sono diversi, ma alcuni di essi sono un ripasso di ciò che a
 
 # SVOLGIMENTO
 
+# CREAZIONE MIGRATION,MODEL AND SEEDER
+
 -   partiamo con il crearci il model, migration e seeder di Technology:
 
 ```
 php artisan make:model Technology -ms
 ```
+
+# MIGRATION
 
 -   ora andiamo nelle migration in create_technologies_table e aggiungiamo le colonne:
 
@@ -42,6 +46,8 @@ php artisan make:model Technology -ms
 
     sarà uguale all'esercizio di one to many
 ```
+
+# SEEDER
 
 -   Ora andiamo nel seeder precisamente TechnologySeeder:
 
@@ -72,6 +78,8 @@ use Faker\Generator as Faker;
     }
 ```
 
+# CREAZIONE TABELLA PONTE O PIVOT
+
 -   ora dobbiamo collegare la tabella del tecnologie con la tabella dei progetti quindi ci facciamo la tabella ponte, quindi facciamo una terza migration:
 
 ```
@@ -95,3 +103,27 @@ php artisan make:migration create_project_technology_table
 ```
 
 -   mettiamo TechnologySeeder nel DatabaseSeeder.php e facciamo un refresh --seed
+
+# MODELS
+
+-   ora spostiamoci sui Models e andiamo a dire che esiste una relazione:
+
+-   in Project:
+
+```php
+ public function technologies()
+    {
+        // # QUI STIAMO DICENDO CHE QUESTI (PROGETTI) APPARTENGONO A MOLTE TECNOLOGIE
+        return $this->belongsToMany(Technology::class);
+    }
+```
+
+-   in Technology facciamo il contrario:
+
+```php
+ public function projects()
+    {
+        // # QUI STIAMO DICENDO CHE A QUESTE (TECNOLOGIE) APPARTENGONO A MOLTE PROGETTI
+        return $this->belongsToMany(Project::class);
+    }
+```
