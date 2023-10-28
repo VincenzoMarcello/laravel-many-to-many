@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         // # CHE VOGLIAMO CHIAMARE IN MANIERA TALE CHE SE FACCIAMO UN REFRESH O UN RESET
         // # BASTERA' FARE php artisan db:seed E TUTTI I SEEDER NELLA call() SI AVVIERANNO
         $this->call([
+            TechnologySeeder::class,
             TypeSeeder::class,
             ProjectSeeder::class,
             UserSeeder::class
