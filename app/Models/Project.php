@@ -22,7 +22,7 @@ class Project extends Model
     }
 
 
-    public function projects()
+    public function technologies()
     {
         // # QUI STIAMO DICENDO CHE QUESTI (PROGETTI) APPARTENGONO A MOLTE TECNOLOGIE
         return $this->belongsToMany(Technology::class);

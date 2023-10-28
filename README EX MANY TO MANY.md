@@ -127,3 +127,88 @@ php artisan make:migration create_project_technology_table
         return $this->belongsToMany(Project::class);
     }
 ```
+
+# ANDIAMO A VEDERE LE CRUD
+
+-   ora andiamo in create e stampiamo a schermo delle check-box con i valori delle tecnologie
+
+# CREATE
+
+-   andiamo nel resource controller:
+
+```php
+// # IMPORTIAMO IL MODEL Technology
+use App\Models\Technology;
+
+
+ public function create()
+    {
+        // # PASSEREMO AL CREATE TUTTI GLI ELEMENTI DI TYPE TRAMITE IL COMPACT E LA FUNZIONE ALL()
+        // # PRIMA PERò CI IMPORTIAMO IL MODEL TYPE
+        $types = Type::all();
+        // # STESSA COSA PER TECHNOLOGY
+        $technologies = Technology::all(); <--------
+
+        return view('admin.projects.create', compact('types', ----->'technologies'<-----));
+    }
+```
+
+-   poi andiamo in views\admin\projects\create:
+
+```php
+     //  CREIAMOCI UNA CHECK-BOX CON I VALORI DELLE TECNOLOGIE
+        <div class="col-12">
+          <div class="row">
+            @foreach ($technologies as $technology)
+              <div class="col-2">
+                //  NEL NAME SI METTONO LE [] PERCHè ALTRIMENTI ANCHE SELEZIONIAMO PIU' CHECKBOX NE ARRIVERà SOLO UNA
+                // INVECE METTENDO LE [] ARRIVA UN ARRAY CHE CONTIENE TUTTE LE CHECK SEGNATE
+                <input type="checkbox" name="technologies[]" id="technology-{{ $technology->id }}"
+                  value="{{ $technology->id }}" class="form-check-control">
+                <label for="technology-{{ $technology->id }}">{{ $technology->label }}</label>
+              </div>
+            @endforeach
+          </div>
+        </div>
+```
+
+-   ora dobbiamo solo validare i dati che ci arrivano dalla check-box quindi nel ProjectController nel metodo Validation:
+
+```php
+.....
+"technologies" => "nullable|integer|exists:technology,id"
+.....
+'technologies' => 'Le tecnologie inserite non sono valido',
+....
+```
+
+-   ora andiamo al metodo store:
+
+```php
+        ......
+        $project->technologies()->attach($data["technologies"]);
+
+        // # FACCIAMO IL REDIRECT IN MANIERA TALE CHE QUANDO SALVIAMO
+        // # IL NUOVO PROGETTO CI RIPORTA A UNA ROTTA CHE VOGLIAMO
+        return redirect()->route('admin.projects.show', $project);
+        ......
+```
+
+-   e nella views create aggiungiamo la checkbox:
+
+```php
+    // CREIAMOCI UNA CHECK-BOX CON I VALORI DELLE TECNOLOGIE
+        <div class="col-12">
+          <div class="form-check @error('technologies') is-invalid @enderror">
+            @foreach ($technologies as $technology)
+              <div class="col-2">
+                // NEL NAME SI METTONO LE [] PERCHè ALTRIMENTI ANCHE SELEZIONIAMO PIU' CHECKBOX NE ARRIVERà SOLO UNA
+                // INVECE METTENDO LE [] ARRIVA UN ARRAY CHE CONTIENE TUTTE LE CHECK SEGNATE
+                <input type="checkbox" name="technologies[]" id="technology-{{ $technology->id }}"
+                  value="{{ $technology->id }}" class="form-check-input" @if (in_array($technology->id, old('technologies') ?? [])) checked @endif>
+                <label for="technology-{{ $technology->id }}">{{ $technology->label }}</label>
+              </div>
+            @endforeach
+          </div>
+        </div>
+```

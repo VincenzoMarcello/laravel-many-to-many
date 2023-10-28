@@ -13,6 +13,9 @@ use App\Models\Project;
 // # IMPORTIAMO IL MODEL Type
 use App\Models\Type;
 
+// # IMPORTIAMO IL MODEL Technology
+use App\Models\Technology;
+
 // ! PER LA VALIDAZIONE IMPORTO IL VALIDATOR
 use Illuminate\Support\Facades\Validator;
 
@@ -49,7 +52,10 @@ class ProjectController extends Controller
         // # PASSEREMO AL CREATE TUTTI GLI ELEMENTI DI TYPE TRAMITE IL COMPACT E LA FUNZIONE ALL()
         // # PRIMA PERò CI IMPORTIAMO IL MODEL TYPE
         $types = Type::all();
-        return view('admin.projects.create', compact('types'));
+        // # STESSA COSA PER TECHNOLOGY
+        $technologies = Technology::all();
+
+        return view('admin.projects.create', compact('types', 'technologies'));
     }
 
     /**
@@ -63,7 +69,7 @@ class ProjectController extends Controller
         // # FACCIAMO UNA VARIABILE DATA CHE RICEVERA' I DATI DEL FORM
         // # METODO SENZA VALIDAZIONE
         // $data = $request->all();
-
+        // dd($request->all());
         // # METODO CON VALIDAZIONE
         $data = $this->validation($request->all());
 
@@ -79,6 +85,8 @@ class ProjectController extends Controller
 
         $project->fill($data);
         $project->save();
+
+        $project->technologies()->attach($data["technologies"]);
 
         // # FACCIAMO IL REDIRECT IN MANIERA TALE CHE QUANDO SALVIAMO
         // # IL NUOVO PROGETTO CI RIPORTA A UNA ROTTA CHE VOGLIAMO
@@ -158,7 +166,8 @@ class ProjectController extends Controller
                 "link" => "required|string",
                 // # QUI STIAMO DICENDO CHE PUO ESSERE NULLO E CHE IL TYPE DEVE ESISTERE NEL CAMPO DELL'ID
                 // # QUINDI SE ABBIAMO 10 ID E METTIAMO 12 CI DARA' ERRORE
-                "type_id" => "nullable|integer|exists:types,id"
+                "type_id" => "nullable|integer|exists:types,id",
+                "technologies" => "nullable|integer|exists:technologies,id"
             ],
             [
                 'name.required' => 'Il nome è obbligatorio',
@@ -172,6 +181,7 @@ class ProjectController extends Controller
                 'link.string' => 'Il tipo deve essere una stringa',
                 // # QUI METTIAMO IL MESSAGGIO DELL'ERRORE 
                 'type_id.exists' => 'Il tipo inserito non è valido',
+                'technologies.exists' => 'Le tecnologie inserite non sono valido',
 
             ]
         )->validate();
