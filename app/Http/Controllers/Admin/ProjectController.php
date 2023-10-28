@@ -85,8 +85,9 @@ class ProjectController extends Controller
 
         $project->fill($data);
         $project->save();
-
-        $project->technologies()->attach($data["technologies"]);
+        if (array_key_exists('technologies', $data)) {
+            $project->technologies()->attach($data["technologies"]);
+        }
 
         // # FACCIAMO IL REDIRECT IN MANIERA TALE CHE QUANDO SALVIAMO
         // # IL NUOVO PROGETTO CI RIPORTA A UNA ROTTA CHE VOGLIAMO

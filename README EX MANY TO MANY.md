@@ -194,6 +194,14 @@ use App\Models\Technology;
         ......
 ```
 
+-   aggiungiamo un controllo se non checkiamo nessuna tecnologia infatti ci darà errore per evitare questo errore:3
+
+```php
+  if (array_key_exists('technologies', $data)) {
+            $project->technologies()->attach($data["technologies"]);
+        }
+```
+
 -   e nella views create aggiungiamo la checkbox:
 
 ```php
