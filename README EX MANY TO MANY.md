@@ -279,3 +279,45 @@ mentre nel resource controller al metodo destroy:
  // # QUESTO SI FA COME BEST PRACTICE
         $project->technologies()->detach();
 ```
+
+# STAMPIAMO A SCHERMO I BADGES
+
+Ora facciamo dei badges che si vedano all'interno delle pagine, andiamo nei models e facciamo un getter:
+
+<!-- Project.php -->
+
+```php
+    // # QUI FACCIAMO UN GETTER PER PERSONALIZZARE E STAMPARE I BADGES DELLE TECNOLOGIE
+    public function getTecnologyBadges()
+    {
+        $badges_html = "";
+        foreach ($this->technologies as $technology) {
+            $badges_html .= "<span class='badge rounded-pill mx-1' style='background-color:{$technology->color}'>{$technology->label}</span>";
+        }
+        return $badges_html;
+    }
+```
+
+poi andiamo nella views show:
+
+```html
+<div class="col-3">
+    <p>
+        <!-- CI STAMPIAMO I BADGES DELLE TECNOLOGIE CON IL GETTER CHE ABBIAMO FATTO -->
+        <strong>Tecnologies:</strong><br />
+        {!! $project->getTecnologyBadges() !!}
+    </p>
+</div>
+```
+
+Ora stampiamoli anche nella views dell'index:
+
+```html
+<!-- AGGIUNGIAMO UNA COLONNA TECNOLOGIE PER LE TECNOLOGIES -->
+.....
+<th scope="col">Tecnologie</th>
+.....
+<!-- USIAMO IL METODO CHE ABBIAMO FATTO ANCHE PER LA SHOW -->
+<td>{!! $project->getTecnologyBadges() !!}</td>
+.....
+```

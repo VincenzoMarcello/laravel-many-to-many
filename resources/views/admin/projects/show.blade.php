@@ -7,7 +7,7 @@
     <a href="{{ route('admin.projects.index') }}" class="btn btn-success">Torna alla lista</a>
     <hr>
     <div class="row g-5 mt-3">
-      <div class="col-4">
+      <div class="col-3">
         <p>
           <strong>Project Name:</strong><br>
           {{ $project->name }}
@@ -15,7 +15,7 @@
       </div>
 
 
-      <div class="col-4">
+      <div class="col-3">
         <p>
           <strong>Type:</strong><br>
           {{-- # QUI STAMPIAMO LA LABEL DEL TYPE CHE ABBIAMO COLLEGATO TRAMITE RELAZIONE --}}
@@ -29,7 +29,15 @@
         </p>
       </div>
 
-      <div class="col-4">
+      <div class="col-3">
+        <p>
+          {{-- # CI STAMPIAMO I BADGES DELLE TECNOLOGIE CON IL GETTER CHE ABBIAMO FATTO --}}
+          <strong>Tecnologies:</strong><br>
+          {!! $project->getTecnologyBadges() !!}
+        </p>
+      </div>
+
+      <div class="col-3">
         <p>
           <strong>Link:</strong><br>
           <a href="#">{{ $project->link }}</a>

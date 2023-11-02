@@ -18,8 +18,10 @@
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Nome</th>
-          {{-- ! AGGIUNGIAMO UN COLONNA TIPO PER IL TYPE --}}
+          {{-- ! AGGIUNGIAMO UNA COLONNA TIPO PER IL TYPE --}}
           <th scope="col">Tipo</th>
+          {{-- ! AGGIUNGIAMO UNA COLONNA TECNOLOGIE PER LE TECNOLOGIES --}}
+          <th scope="col">Tecnologie</th>
           <th scope="col">Descrizione</th>
           <th scope="col">Link</th>
           <th scope="col"></th>
@@ -33,6 +35,8 @@
             <td>{{ $project->name }}</td>
             {{-- ! USIAMO IL METODO CHE ABBIAMO FATTO ANCHE PER LA SHOW --}}
             <td>{!! $project->getTypeBadge() !!}</td>
+            {{-- ! USIAMO IL METODO CHE ABBIAMO FATTO ANCHE PER LA SHOW --}}
+            <td>{!! $project->getTecnologyBadges() !!}</td>
             <td>{{ $project->description }}</td>
             <td>{{ $project->link }}</td>
 
