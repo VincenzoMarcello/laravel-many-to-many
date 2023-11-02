@@ -6,6 +6,17 @@
     <a href="{{ route('admin.projects.index') }}" class="btn btn-success">Torna alla lista</a>
     <hr>
     <h2>Crea progetto</h2>
+
+    @if ($errors->any())
+      <div class="alert alert-danger">
+        <ul>
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
     <form action="{{ route('admin.projects.store') }}" method="POST">
       @csrf
       <div class="row g-3">

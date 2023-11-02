@@ -67,10 +67,10 @@ use Faker\Generator as Faker;
         $_technologies = ["html", "css", "js", "sass", "vue", "php", "mysql", "laravel"];
 
         // # QUI FACCIAMO IL CICLO PER POPOLARE OGNI ELEMENTO DEL DB
-        foreach ($_technologies as $_technologies) {
+        foreach ($_technologies as $_technology) {
             $technology = new Technology();
             // # QUI METTIAMO L'ARRAY DI TECNOLOGIE
-            $technology->label = $_technologies;
+            $technology->label = $_technology;
             // # QUI GENERIAMO UN COLORE CASUALE IN ESADECIAMALE
             $technology->color = $faker->hexColor();
             $technology->save();
@@ -176,7 +176,7 @@ use App\Models\Technology;
 
 ```php
 .....
-"technologies" => "nullable|integer|exists:technology,id"
+"technologies" => "nullable|exists:technology,id"
 .....
 'technologies' => 'Le tecnologie inserite non sono valido',
 ....
@@ -219,4 +219,63 @@ use App\Models\Technology;
             @endforeach
           </div>
         </div>
+```
+
+# EDIT
+
+-   vediamo ora la edit nel resource controller al metodo edit:
+
+```php
+ // # FACCIAMO LO STESSO DEL CREATE PRENDIAMO TUTTE LE TECNOLOGIE E LE MANDIAMO GIU'
+        $technologies = Technology::all();
+
+        $technology_ids = $project->technologies->pluck('id')->toArray();
+
+        return view('admin.projects.edit', compact('project', 'types', 'technologies', 'technology_ids'));
+```
+
+nelle views dell'edit:
+
+```php
+  <!-- # CREIAMOCI UNA CHECK-BOX CON I VALORI DELLE TECNOLOGIE -->
+        <div class="col-12">
+          <div class="form-check @error('technologies') is-invalid @enderror">
+            @foreach ($technologies as $technology)
+              <div class="col-2">
+                <!-- NEL NAME SI METTONO LE [] PERCHè ALTRIMENTI ANCHE SELEZIONIAMO PIU' CHECKBOX NE ARRIVERà SOLO UNA -->
+                <!-- INVECE METTENDO LE [] ARRIVA UN ARRAY CHE CONTIENE TUTTE LE CHECK SEGNATE -->
+                <input type="checkbox" name="technologies[]" id="technology-{{ $technology->id }}"
+                  value="{{ $technology->id }}" class="form-check-input" @if (in_array($technology->id, old('technologies') ?? $technology_ids)) checked @endif>
+                <label for="technology-{{ $technology->id }}">{{ $technology->label }}</label>
+              </div>
+            @endforeach
+          </div>
+        </div>
+```
+
+mentre nel resource controller al metodo update:
+
+```php
+    // # METODO CON VALIDAZIONE
+        $data = $this->validation($request->all(), $project->id);
+        $project->fill($data);
+        $project->save();
+
+        if (array_key_exists('technologies', $data)) {
+            $project->technologies()->sync($data["technologies"]);
+
+        } else {
+            $project->technologies()->detach();
+        }
+
+        // # COME PER LO STORE FACCIAMO IL REDIRECT IN MANIERA TALE CHE QUANDO SALVIAMO
+        // # IL PROGETTO MODIFICATO CI RIPORTA A UNA ROTTA CHE VOGLIAMO
+        return redirect()->route('admin.projects.show', $project);
+```
+
+mentre nel resource controller al metodo destroy:
+
+```php
+ // # QUESTO SI FA COME BEST PRACTICE
+        $project->technologies()->detach();
 ```

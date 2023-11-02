@@ -24,10 +24,10 @@ class TechnologySeeder extends Seeder
         $_technologies = ["html", "css", "js", "sass", "vue", "php", "mysql", "laravel"];
 
         // # QUI FACCIAMO IL CICLO PER POPOLARE OGNI ELEMENTO DEL DB
-        foreach ($_technologies as $_technologies) {
+        foreach ($_technologies as $_technology) {
             $technology = new Technology();
             // # QUI METTIAMO L'ARRAY DI TECNOLOGIE
-            $technology->label = $_technologies;
+            $technology->label = $_technology;
             // # QUI GENERIAMO UN COLORE CASUALE IN ESADECIAMALE
             $technology->color = $faker->hexColor();
             $technology->save();

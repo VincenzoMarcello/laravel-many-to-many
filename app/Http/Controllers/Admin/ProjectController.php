@@ -118,7 +118,12 @@ class ProjectController extends Controller
         // $projects = Project::findOrFail($id);
         // # FACCIAMO COME ABBIAMO FATTO NEL CREATE
         $types = Type::all();
-        return view('admin.projects.edit', compact('project', 'types'));
+        // # FACCIAMO LO STESSO DEL CREATE PRENDIAMO TUTTE LE TECNOLOGIE E LE MANDIAMO GIU'
+        $technologies = Technology::all();
+
+        $technology_ids = $project->technologies->pluck('id')->toArray();
+
+        return view('admin.projects.edit', compact('project', 'types', 'technologies', 'technology_ids'));
     }
 
     /**
@@ -139,6 +144,13 @@ class ProjectController extends Controller
         $project->fill($data);
         $project->save();
 
+        if (array_key_exists('technologies', $data)) {
+            $project->technologies()->sync($data["technologies"]);
+
+        } else {
+            $project->technologies()->detach();
+        }
+
         // # COME PER LO STORE FACCIAMO IL REDIRECT IN MANIERA TALE CHE QUANDO SALVIAMO
         // # IL PROGETTO MODIFICATO CI RIPORTA A UNA ROTTA CHE VOGLIAMO
         return redirect()->route('admin.projects.show', $project);
@@ -152,6 +164,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        // # QUESTO SI FA COME BEST PRACTICE
+        $project->technologies()->detach();
+
         $project->delete();
         return redirect()->route('admin.projects.index');
     }
@@ -167,8 +182,8 @@ class ProjectController extends Controller
                 "link" => "required|string",
                 // # QUI STIAMO DICENDO CHE PUO ESSERE NULLO E CHE IL TYPE DEVE ESISTERE NEL CAMPO DELL'ID
                 // # QUINDI SE ABBIAMO 10 ID E METTIAMO 12 CI DARA' ERRORE
-                "type_id" => "nullable|integer|exists:types,id",
-                "technologies" => "nullable|integer|exists:technologies,id"
+                "type_id" => "nullable|exists:types,id",
+                "technologies" => "nullable|exists:technologies,id"
             ],
             [
                 'name.required' => 'Il nome è obbligatorio',
