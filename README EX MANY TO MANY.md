@@ -321,3 +321,21 @@ Ora stampiamoli anche nella views dell'index:
 <td>{!! $project->getTecnologyBadges() !!}</td>
 .....
 ```
+
+Se vogliamo popolare le colonne con dati fittizi andiamo nei seeders in ProjectSeeder:
+
+```php
+// # CI IMPORTIAMO IL MODELLO TECHNOLOGY
+use App\Models\Technology;
+```
+
+```php
+$technology_ids = Technology::all()->pluck('id');
+```
+
+e facciamo l'attach con faker:
+
+```php
+// GENERIAMO RANDOMICAMENTE DA 0 A 3 TECNOLOGIE CON IL RAND()
+$project->technologies()->attach($faker->randomElements($technology_ids, rand(0, 3)));
+```

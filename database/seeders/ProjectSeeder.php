@@ -6,6 +6,9 @@ namespace Database\Seeders;
 use App\Models\Project;
 // # CI IMPORTIAMO IL MODELLO TYPE
 use App\Models\Type;
+// # CI IMPORTIAMO IL MODELLO TECHNOLOGY
+use App\Models\Technology;
+
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -32,6 +35,8 @@ class ProjectSeeder extends Seeder
         // # ANCHE UN VALORE NULL [1,2,3,..,null]
         $type_ids[] = null;
 
+        $technology_ids = Technology::all()->pluck('id');
+
         for ($i = 0; $i < 50; $i++) {
             $project = new Project();
             // # CON IL METODO randomElement($type_ids) di FAKER CI ANDIAMO A PRENDERE DEGLI ID 
@@ -49,6 +54,8 @@ class ProjectSeeder extends Seeder
 
             //! NON CI DIMENTICHIAMO DI SALVARE!
             $project->save();
+
+            $project->technologies()->attach($faker->randomElements($technology_ids, rand(0, 3)));
         }
     }
 }
