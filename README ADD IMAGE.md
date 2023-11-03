@@ -208,3 +208,48 @@ un if che cancella l'immagine salvata nello storage se cancelliamo il project a 
 ## ORA MANCA LA MODIFICA
 
 andiamo nell'edit nelle views:
+
+```html
+<!-- QUI CI COPIAMO LA RIGA DAL CREATE E AGGIUNGIAMO LA VISUALIZZAZIONE DELL'IMMAGINE ALLA FINE -->
+<div class="col-12">
+    <div class="row">
+        <div class="col-8">
+            <label for="cover_image" class="form-label">Scegli immagine</label>
+            <input
+                class="form-control @error('cover_image') is-invalid @enderror"
+                type="file"
+                id="cover_image"
+                name="cover_image"
+                value="{{ old('cover_image') }}"
+            />
+            @error('cover_image')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="col-4">
+            <img
+                src="{{ asset('/storage/' . $project->cover_image) }}"
+                alt=""
+                class="img-fluid"
+            />
+        </div>
+    </div>
+</div>
+```
+
+mentre nel metodo update del resource controller:
+
+```php
+ // # 1) SE ABBIAMO UN FILE cover_image
+        if ($request->hasFile('cover_image')) {
+            // # 2) SE ABBIAMO UN'IMMAGINE LA CANCELLI
+            if ($project->cover_image) {
+                Storage::delete($project->cover_image);
+            }
+
+            // # 3) E METTI NELLO STORAGE QUELLA NUOVA AL SUO POSTO
+            $cover_image_path = Storage::put('upload/projects/cover_image', $data['cover_image']);
+            // # NEL DB METTIAMO IL PATH
+            $project->cover_image = $cover_image_path;
+        }
+```

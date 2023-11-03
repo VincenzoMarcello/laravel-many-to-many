@@ -154,7 +154,22 @@ class ProjectController extends Controller
         // # METODO CON VALIDAZIONE
         $data = $this->validation($request->all(), $project->id);
         $project->fill($data);
+
+        // # 1) SE ABBIAMO UN FILE cover_image
+        if ($request->hasFile('cover_image')) {
+            // # 2) SE ABBIAMO UN'IMMAGINE LA CANCELLI
+            if ($project->cover_image) {
+                Storage::delete($project->cover_image);
+            }
+
+            // # 3) E METTI NELLO STORAGE QUELLA NUOVA AL SUO POSTO
+            $cover_image_path = Storage::put('upload/projects/cover_image', $data['cover_image']);
+            // # NEL DB METTIAMO IL PATH
+            $project->cover_image = $cover_image_path;
+        }
+
         $project->save();
+
 
         if (array_key_exists('technologies', $data)) {
             $project->technologies()->sync($data["technologies"]);

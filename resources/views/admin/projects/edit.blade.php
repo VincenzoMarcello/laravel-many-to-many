@@ -7,10 +7,28 @@
     <a href="{{ route('admin.projects.show', $project) }}" class="btn btn-warning">Vai al dettaglio</a>
     <hr>
     <h2>Modifica progetto</h2>
-    <form action="{{ route('admin.projects.update', $project) }}" method="POST">
+    <form action="{{ route('admin.projects.update', $project) }}" enctype="multipart/form-data" method="POST">
       @csrf
       @method('PATCH')
       <div class="row g-3">
+
+        {{-- ! QUI CI COPIAMO LA RIGA DAL CREATE E AGGIUNGIAMO LA VISUALIZZAZIONE DELL'IMMAGINE ALLA FINE --}}
+        <div class="col-12">
+          <div class="row">
+            <div class="col-8">
+              <label for="cover_image" class="form-label">Scegli immagine</label>
+              <input class="form-control @error('cover_image') is-invalid @enderror" type="file" id="cover_image"
+                name="cover_image" value="{{ old('cover_image') }}">
+              @error('cover_image')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+            <div class="col-4">
+              <img src="{{ asset('/storage/' . $project->cover_image) }}" class="img-fluid" alt="">
+            </div>
+          </div>
+        </div>
+
         <div class="col-12">
           <label for="name" class="form-label">Name</label>
           {{-- ! QUI METTIAMO NELL'INPUT IL VECCHIO VALORE E IL GLI ERROR PER LA VALIDAZIONE --}}
@@ -47,7 +65,8 @@
                 {{-- ! NEL NAME SI METTONO LE [] PERCHè ALTRIMENTI ANCHE SELEZIONIAMO PIU' CHECKBOX NE ARRIVERà SOLO UNA --}}
                 {{-- ! INVECE METTENDO LE [] ARRIVA UN ARRAY CHE CONTIENE TUTTE LE CHECK SEGNATE --}}
                 <input type="checkbox" name="technologies[]" id="technology-{{ $technology->id }}"
-                  value="{{ $technology->id }}" class="form-check-input" @if (in_array($technology->id, old('technologies') ?? $technology_ids)) checked @endif>
+                  value="{{ $technology->id }}" class="form-check-input"
+                  @if (in_array($technology->id, old('technologies') ?? $technology_ids)) checked @endif>
                 <label for="technology-{{ $technology->id }}">{{ $technology->label }}</label>
               </div>
             @endforeach

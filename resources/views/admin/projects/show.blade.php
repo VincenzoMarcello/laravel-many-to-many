@@ -53,7 +53,7 @@
 
       <div class="col-12">
         <p>
-          <strong>Cover imgage</strong><br>
+          <strong>Cover image</strong><br>
           <img src="{{ asset('/storage/' . $project->cover_image) }}" class="img-fluid" alt="">
         </p>
       </div>
