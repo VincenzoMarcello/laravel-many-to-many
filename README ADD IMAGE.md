@@ -125,3 +125,53 @@ ora andiamo nel form e vediamo che succede quando effettivamente carichiamo un i
 ```
 
 ## PER QUANTO RIGUARDA LA VALIDAZIONE
+
+nel resource controller al metodo validation:
+
+```php
+// # QUI ANDIAMO A SPECIFICARE CHE ESTENSIONI ACCETTIAMO PER L'IMMAGINE IN QUESTO CASO TUTTE
+                // # QUELLE CHE POSSONO ESSERE IMMAGINI, OPPURE POTEVAMO DARE mimes:jpg,png,bmp,...
+                // # OPPURE SE NON ERA UN'IMMAGINE MA UN FILE QUALSIASI POTEVAMO METTERE file
+                // # METTIAMO max:1024 PER DIRE CHE L'IMMAGINE DEVE ESSERE MASSIMO DI 1024KB
+                'cover_image' => 'nullable|image|max:1024',
+                .....
+                'cover_image.image' => "Il file caricato deve essere un'immagine",
+                'cover_image.max' => "Il file caricato non deve superare i 1024KB",
+                .....
+```
+
+## PER QUANTO RIGUARDA LO STORE
+
+ora per salvare l'immagine dobbiamo passare per lo store nel resource controller, innanzitutto ci dobbiamo salvare la facades Storage:
+
+```php
+use Illuminate\Support\Facades\Storage;
+```
+
+nel metodo store del resource controller:
+
+```php
+ // # METTIAMO L'IMMAGINE IN UNA CARTELLA TRAMITE LO STORAGE E QUELLO CHE CI ARRIVA (put)
+        $cover_image_path = Storage::put('cartella in cui caricare il file', $data['cover_image']);
+        // # NEL DB METTIAMO IL PATH
+        $project->cover_image = $cover_image_path;
+```
+
+```php
+// SCEGLIAMO IL NOME DELLA CARTELLA, FACCIAMO COSì IN QUANTO SE ABBIAMO PIU' IMMAGINI LE POSSIAMO RAGGRUPPARE
+// E NON AVERLE SPARSE PERCIò LO SCAFFOLDING CI VUOLE
+$cover_image_path = Storage::put('upload/projects/cover_image', $data['cover_image']);
+// ESEMPIO PIU' IMMAGINI
+$cover_image_path = Storage::put('upload/projects/cover_a', $data['cover_a']);
+$cover_image_path = Storage::put('upload/projects/cover_b', $data['cover_b']);
+$cover_image_path = Storage::put('upload/users/user_pic', $data['user_pic']);
+```
+
+andiamo a mettere un controllo se inviamo il form senza caricare nessun'immagine altrimenti ci darà errore:
+
+```php
+ if (array_key_exists('cover_image', $data)) {   <--------
+        $cover_image_path = Storage::put('cartella in cui caricare il file', $data['cover_image']);
+        $project->cover_image = $cover_image_path;
+ }
+```

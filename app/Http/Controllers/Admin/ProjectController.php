@@ -19,6 +19,9 @@ use App\Models\Technology;
 // ! PER LA VALIDAZIONE IMPORTO IL VALIDATOR
 use Illuminate\Support\Facades\Validator;
 
+// ! MI IMPORTO QUESTA PER USARLA NELLO STORE
+use Illuminate\Support\Facades\Storage;
+
 class ProjectController extends Controller
 {
     /**
@@ -84,7 +87,16 @@ class ProjectController extends Controller
         // $project->save();
 
         $project->fill($data);
+
+        // # METTIAMO L'IMMAGINE IN UNA CARTELLA TRAMITE LO STORAGE E QUELLO CHE CI ARRIVA(put)
+        if (array_key_exists('cover_image', $data)) {
+            $cover_image_path = Storage::put('upload/projects/cover_image', $data['cover_image']);
+            // # NEL DB METTIAMO IL PATH
+            $project->cover_image = $cover_image_path;
+        }
+
         $project->save();
+
         if (array_key_exists('technologies', $data)) {
             $project->technologies()->attach($data["technologies"]);
         }
@@ -178,6 +190,10 @@ class ProjectController extends Controller
             $data,
             [
                 'name' => 'required|string|max:20',
+                // # QUI ANDIAMO A SPECIFICARE CHE ESTENSIONI ACCETTIAMO PER L'IMMAGINE IN QUESTO CASO TUTTE
+                // # QUELLE CHE POSSONO ESSERE IMMAGINI, OPPURE POTEVAMO DARE mimes:jpg,png,bmp,... 
+                // # OPPURE SE NON ERA UN'IMMAGINE MA UN FILE QUALSIASI POTEVAMO METTERE file
+                'cover_image' => 'nullable|image|max:1024',
                 "description" => "required|string",
                 "link" => "required|string",
                 // # QUI STIAMO DICENDO CHE PUO ESSERE NULLO E CHE IL TYPE DEVE ESISTERE NEL CAMPO DELL'ID
@@ -189,6 +205,9 @@ class ProjectController extends Controller
                 'name.required' => 'Il nome è obbligatorio',
                 'name.string' => 'Il nome deve essere una stringa',
                 'name.max' => 'Il nome deve massimo di 20 caratteri',
+
+                'cover_image.image' => "Il file caricato deve essere un'immagine",
+                'cover_image.max' => "Il file caricato non deve superare i 1024KB",
 
                 'description.required' => 'La descrizione è obbligatorio',
                 'description.string' => 'La descrizione deve essere una stringa',
