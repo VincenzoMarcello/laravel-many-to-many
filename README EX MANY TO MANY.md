@@ -339,3 +339,7 @@ e facciamo l'attach con faker:
 // GENERIAMO RANDOMICAMENTE DA 0 A 3 TECNOLOGIE CON IL RAND()
 $project->technologies()->attach($faker->randomElements($technology_ids, rand(0, 3)));
 ```
+
+fine.
+
+# Vedere il README ADD IMAGE per continuare con l'inserimento delle immagini.
