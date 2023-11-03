@@ -11,6 +11,8 @@ Implementare l'invio di una mail
 
 per caricare un'immagine o un file abbiamo bisogno di uno spazio in cui caricarlo, il path che associa il file a ogni posts e un form da cui un utente caricherà il file.
 
+## SCEGLIAMO IL DISCO SE PUBBLICO O LOCALE
+
 Lo spazio dove salvarlo si trova nella cartella storage, questa avrà un local disk che non è accessibile dal web e un public disk che invece è accessibile dal web tramite URL, quindi le immagini salvate in local non saranno accessibili dal web mentre quelle salvate in public si.
 
 andiamo ora a scegliere il disco da utilizzare se locale o pubblico, andiamo nel file .env:
@@ -38,6 +40,8 @@ poi andiamo nella cartella config in filesystems.php:
 
 ```
 
+## FACCIAMO UN COLLEGAMENTO TRA LE DUE CARTELLE PUBLIC
+
 Ora dobbiamo fare un collegamento tra la cartella public esterna (quella che sta sotto node_modules o lang) e la cartella public che sta in storage, useremo questo comando per creare il **symlink**:
 
 ```
@@ -45,6 +49,8 @@ php artisan storage:link
 ```
 
 questo crea un collegamento "storage" nella cartella public esterna che porta alla cartella public interna quindi qualsiasi file metteremo nella cartella public comparirà in entrambe le cartelle public.
+
+## FACCIAMO UNA NUOVA MIGRATION PER AGGIUNGERE UNA NUOVA COLONNA ALLA TABELLA PROJECTS
 
 ora ci andiamo a fare una nuova migration in cui per ogni project salveremo un cover image potremo anche aggiungere una colonna direttamente alla migration che abbiamo ma ora la facciamo apparte:
 
@@ -84,3 +90,38 @@ e facciamo:
 php artisan migrate
 <!-- in maniera tale da aggiungere la colonna al DB -->
 ```
+
+## ANDIAMO A VEDERE ORA IL FORM DOVE CARICHEREMO IL FILE O L'IMAGE
+
+ora andiamo nel form e vediamo che succede quando effettivamente carichiamo un image o un file.
+
+**ATTENZIONE** i form normalmente non sono abilitati all'invio dei file per farlo dobbiamo aggiungere `enctype="multipart/form-data"`, in quanto se inviassimo senza questa cosa arriverebbe solo una stringa e non il file fisico:
+
+## PARTIAMO DAL CREATE
+
+<!-- in views create -->
+
+```html
+<form ... enctype="multipart/form-data"></form>
+
+<!-- AL FORM VA AGGIUNTA QUESTA PARTE enctype="multipart/form-data" E SI ABILITA IL SALVATAGGIO DEL FILE -->
+```
+
+```html
+<!-- LA RIGA DELL'INPUT SARA' UGUALE ALLE ALTRE MA AVRA' type=file -->
+<div class="col-12">
+    <label for="cover_image" class="form-label">Scegli immagine</label>
+    <input
+        class="form-control @error('cover_image') is-invalid @enderror"
+        type="file"
+        id="cover_image"
+        name="cover_image"
+        value="{{ old('cover_image') }}"
+    />
+    @error('cover_image')
+    <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+```
+
+## PER QUANTO RIGUARDA LA VALIDAZIONE

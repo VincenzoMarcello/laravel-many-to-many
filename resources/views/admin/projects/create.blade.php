@@ -17,9 +17,20 @@
       </div>
     @endif
 
-    <form action="{{ route('admin.projects.store') }}" method="POST">
+    <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="row g-3">
+
+        {{-- ! QUI CI FACCIAMO LA NUOVA RIGA DEL FORM PER IL SAVATAGGIO DELL'IMMAGINE --}}
+        <div class="col-12">
+          <label for="cover_image" class="form-label">Scegli immagine</label>
+          <input class="form-control @error('cover_image') is-invalid @enderror" type="file" id="cover_image"
+            name="cover_image" value="{{ old('cover_image') }}">
+          @error('cover_image')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+        </div>
+
         <div class="col-12">
           <label for="name" class="form-label">Name</label>
           {{-- ! QUI METTIAMO NELL'INPUT IL VECCHIO VALORE E IL GLI ERROR PER LA VALIDAZIONE --}}
@@ -58,7 +69,8 @@
                 {{-- ! NEL NAME SI METTONO LE [] PERCHè ALTRIMENTI ANCHE SELEZIONIAMO PIU' CHECKBOX NE ARRIVERà SOLO UNA --}}
                 {{-- ! INVECE METTENDO LE [] ARRIVA UN ARRAY CHE CONTIENE TUTTE LE CHECK SEGNATE --}}
                 <input type="checkbox" name="technologies[]" id="technology-{{ $technology->id }}"
-                  value="{{ $technology->id }}" class="form-check-input" @if (in_array($technology->id, old('technologies') ?? [])) checked @endif>
+                  value="{{ $technology->id }}" class="form-check-input"
+                  @if (in_array($technology->id, old('technologies') ?? [])) checked @endif>
                 <label for="technology-{{ $technology->id }}">{{ $technology->label }}</label>
               </div>
             @endforeach
