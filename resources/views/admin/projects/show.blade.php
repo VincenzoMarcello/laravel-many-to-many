@@ -50,6 +50,13 @@
           {{ $project->description }}
         </p>
       </div>
+
+      <div class="col-12">
+        <p>
+          <strong>Cover imgage</strong><br>
+          <img src="{{ asset('/storage/' . $project->cover_image) }}" class="img-fluid" alt="">
+        </p>
+      </div>
     </div>
   </div>
 @endsection

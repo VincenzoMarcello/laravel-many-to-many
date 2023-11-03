@@ -179,6 +179,14 @@ class ProjectController extends Controller
         // # QUESTO SI FA COME BEST PRACTICE
         $project->technologies()->detach();
 
+        // # QUI METTIAMO UN IF CHE ELIMINA L'IMMAGINE DALLO STORAGE SE CI STA
+        // # SE NON METTESSIMO QUESTO QUANDO ELIMINIAMO UN PROJECT L'IMMAGINE SALVATA FISICAMENTE 
+        // # NELLO STORAGE RIMARREBBE MENTRE METTENDO QUESTO VIENE CANCELLATA INSIEM AL PROJECT
+        // # QUINDI if SE ESISTE L'IMMAGINE USA IL METODO DI STORAGE CHE ELIMINA E CANCELLA L'IMMAGINE
+        if ($project->cover_image) {
+            Storage::delete($project->cover_image);
+        }
+
         $project->delete();
         return redirect()->route('admin.projects.index');
     }

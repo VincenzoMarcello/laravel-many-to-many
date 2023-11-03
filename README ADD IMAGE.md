@@ -175,3 +175,36 @@ andiamo a mettere un controllo se inviamo il form senza caricare nessun'immagine
         $project->cover_image = $cover_image_path;
  }
 ```
+
+## VISUALIZZARE L'IMMAGINE NELLA SHOW
+
+ora vogliamo visualizzare nella views show l'immagine:
+
+```php
+// USIAMO IL METODO ASSET E SOMMIAMO IL PATH /storage/ CON $project->cover_image
+   <div class="col-12">
+        <p>
+          <strong>Cover imgage</strong><br>
+          <img src="{{ asset('/storage/' . $project->cover_image) }}" class="img-fluid" alt="">
+        </p>
+      </div>
+```
+
+## DESTROY
+
+dopo di che in destroy nel resource controller andiamo a mettere
+un if che cancella l'immagine salvata nello storage se cancelliamo il project a cui è associata:
+
+```php
+        // # QUI METTIAMO UN IF CHE ELIMINA L'IMMAGINE DALLO STORAGE SE CI STA
+        // # SE NON METTESSIMO QUESTO QUANDO ELIMINIAMO UN PROJECT L'IMMAGINE SALVATA FISICAMENTE
+        // # NELLO STORAGE RIMARREBBE MENTRE METTENDO QUESTO VIENE CANCELLATA INSIEM AL PROJECT
+        // # QUINDI if SE ESISTE L'IMMAGINE USA IL METODO DI STORAGE CHE ELIMINA E CANCELLA L'IMMAGINE
+        if ($project->cover_image) {
+            Storage::delete($project->cover_image);
+        }
+```
+
+## ORA MANCA LA MODIFICA
+
+andiamo nell'edit nelle views:
