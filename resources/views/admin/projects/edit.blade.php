@@ -24,6 +24,13 @@
               @enderror
             </div>
             <div class="col-4">
+              {{-- ! QUI METTIAMO UN TASTO PER ELIMINARE L'IMMAGINE NELL'EDIT  --}}
+              @if ($project->cover_image)
+                <span class="badge text-bg-danger mb-3 delete-image" id="delete-image-button">Elimina immagine</span>
+              @endif
+
+
+              {{-- ! QUI METTIAMO L'IMMAGINE --}}
               <img src="{{ asset('/storage/' . $project->cover_image) }}" class="img-fluid" alt="">
             </div>
           </div>
@@ -98,4 +105,25 @@
       {{-- ! RICORDA CHE IL BUTTON DELL'INVIO DEL FORM NON DEVE ESSERE MAI TYPE BUTTON --}}
       <button class="btn btn-success mt-3">Salva progetto</button>
     </form>
+
+    {{-- ! FORM PER ELIMINAZIONE DELL'IMMAGINE --}}
+    @if ($project->cover_image)
+      <form method="POST" action="{{ route('admin.projects.delete-image', $project) }}" id="delete-image-form">
+        @method('DELETE')
+        @csrf
+      </form>
+    @endif
+  @endsection
+
+  {{-- ! QUI USIAMO JAVASCRIPT PER FAR SI CHE AL CLICK DEL PULSANTE PARTA IL SUBMIT --}}
+  @section('scripts')
+    @if ($project->cover_image)
+      <script>
+        const deleteImgBtn = document.getElementById('delete-image-button');
+        const deleteImgForm = document.getElementById('delete-image-form');
+        deleteImgBtn.addEventListener('click', function() {
+          deleteImgForm.submit();
+        });
+      </script>
+    @endif
   @endsection

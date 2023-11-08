@@ -206,6 +206,17 @@ class ProjectController extends Controller
         return redirect()->route('admin.projects.index');
     }
 
+    // # QUI METTIAMO LA FUNCTION CHE ELIMINA LE IMMAGINI NELL'EDIT TRAMITE IL TASTO ELIMINA IMMAGINE
+    public function deleteImage(Project $project)
+    {
+        Storage::delete($project->cover_image);
+        $project->cover_image = null;
+        $project->save();
+        return redirect()->back();
+    }
+
+
+
     // ! FACCIO UN METODO PRIVATO PER LA VALIDAZIONE
     private function validation($data)
     {

@@ -253,3 +253,60 @@ mentre nel metodo update del resource controller:
             $project->cover_image = $cover_image_path;
         }
 ```
+
+-   per far si che si possa eliminare l'immagine dell'edit se ad esempio sbagliamo a caricare immagine e quindi eliminandola anche dallo storage bisogna fare un paio di operazione:
+
+    -   mettere un pulsante che premendolo darà un input per l'eliminazione dell'immagine:
+
+        ```php
+        @if ($project->cover_image)
+        <span class="badge text-bg-danger mb-3 delete-image" id="delete-image-button">Elimina immagine</span>
+        @endif
+
+        <!-- la cosa importante è mettere un id che poi ci servirà e mettere l'if "se c'è l'immagine" -->
+        ```
+
+    -   successivamente dobbiamo mettere un form che partirà al click del pulsante che abbiamo fatto in precedenza
+        e avrà il metodo DELETE:
+
+        ```php
+        @if ($project->cover_image)
+        <form method="POST" action="{{ route('admin.projects.delete-image', $project) }}" id="delete-image-form">
+        @method('DELETE')
+        @csrf
+        </form>
+        @endif
+        <!-- mettiamo sempre l'if "se c'è l'immagine" questo form verrà inviato virtualmente perchè non ha un pulsante infatti siccome l'edit ha già un form non possiamo mettere un form in un form -->
+        ```
+
+    -   e mettere lo script alla fine:
+        ```php
+        <!-- QUI USIAMO JAVASCRIPT PER FAR SI CHE AL CLICK DEL PULSANTE PARTA IL SUBMIT -->
+        @section('scripts')
+        @if ($project->cover_image)
+        <script>
+        const deleteImgBtn = document.getElementById('delete-image-button');
+        const deleteImgForm = document.getElementById('delete-image-form');
+        deleteImgBtn.addEventListener('click', function() {
+        deleteImgForm.submit();
+        });
+        </script>
+        @endif
+        @endsection
+        ```
+    -   dobbiamo creare la rotta in web.php:
+        ```php
+        // # QUI CI CREIAMO UNA NUOVA ROTTA PER ELIMINARE L'IMMAGINE NELL'EDIT
+        Route::delete('/projects/{project}/delete-image', [ProjectController::class, 'deleteImage'])->name('projects.delete-image');
+        ```
+    -   e mettere la function che controllerà tutto nel project controller:
+        ```php
+          // # QUI METTIAMO LA FUNCTION CHE ELIMINA LE IMMAGINI NELL'EDIT TRAMITE IL TASTO ELIMINA IMMAGINE
+        public function deleteImage(Project $project)
+        {
+        Storage::delete($project->cover_image);
+        $project->cover_image = null;
+        $project->save();
+        return redirect()->back();
+        }
+        ```

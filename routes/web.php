@@ -31,7 +31,8 @@ Route::middleware(['auth', 'verified'])
     Route::get('/', [AdminPageController::class, 'index'])->name('home');
     // # QUI IMPOSTIAMO LA ROTTA DEL RESOURCE CONTROLLER
     Route::resource('projects', ProjectController::class);
-
+    // # QUI CI CREIAMO UNA NUOVA ROTTA PER ELIMINARE L'IMMAGINE NELL'EDIT
+    Route::delete('/projects/{project}/delete-image', [ProjectController::class, 'deleteImage'])->name('projects.delete-image');
   });
 
 require __DIR__ . '/auth.php';
